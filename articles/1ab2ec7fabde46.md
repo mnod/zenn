@@ -2,7 +2,7 @@
 title: "EIGRP の練習"
 emoji: "🤴"
 type: "tech"
-topics: ["cisco", "ccna", "dynamips", "dynagen", "rip"]
+topics: ["cisco", "ccna", "dynamips", "dynagen", "eigrp"]
 published: true
 ---
 
