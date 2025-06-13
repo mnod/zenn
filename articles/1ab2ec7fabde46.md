@@ -19,6 +19,67 @@ https://www.infraexpert.com/study/study31.html
 
 https://zenn.dev/mnod/articles/c273d13817e8a6 の基本設定と同じ構成
 
+r1
+```
+conf t
+hostname r1
+int f0/0
+ip addr 10.2.0.254 255.255.255.0
+no shut
+int s1/0
+ip addr 172.16.0.253 255.255.255.252
+no shut
+int s1/1
+ip addr 172.16.1.254 255.255.255.252
+no shut
+```
+
+r2
+```
+conf t
+hostname r2
+int f0/0
+ip addr 10.2.1.254 255.255.255.0
+no shut
+int s1/0
+ip addr 172.16.2.253 255.255.255.252
+no shut
+int s1/1
+ip addr 172.16.0.254 255.255.255.252
+no shut
+```
+
+r3
+```
+conf t
+hostname r3
+int f0/0
+ip addr 10.2.2.254 255.255.255.0
+no shut
+int s1/0
+ip addr 172.16.1.253 255.255.255.252
+no shut
+int s1/1
+ip addr 172.16.3.254 255.255.255.252
+no shut
+```
+
+r4
+```
+conf t
+hostname r4
+int f0/0
+ip addr 10.2.3.254 255.255.255.0
+no shut
+int s1/0
+ip addr 172.16.3.253 255.255.255.252
+no shut
+int s1/1
+ip addr 172.16.2.254 255.255.255.252
+no shut
+```
+
+
 
 # EIGRP の有効化
 
