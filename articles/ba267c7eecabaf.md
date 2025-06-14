@@ -15,12 +15,69 @@ Dynagen、Dynamips の利用環境はすでに整っているものとします�
 
 https://zenn.dev/mnod/articles/c273d13817e8a6 の基本設定と同じ構成
 
+r1
+```
+conf t
+hostname r1
+int f0/0
+ip addr 10.2.0.254 255.255.255.0
+no shut
+int s1/0
+ip addr 172.16.0.253 255.255.255.252
+no shut
+int s1/1
+ip addr 172.16.1.254 255.255.255.252
+no shut
+```
+
+r2
+```
+conf t
+hostname r2
+int f0/0
+ip addr 10.2.1.254 255.255.255.0
+no shut
+int s1/0
+ip addr 172.16.2.253 255.255.255.252
+no shut
+int s1/1
+ip addr 172.16.0.254 255.255.255.252
+no shut
+```
+
+r3
+```
+conf t
+hostname r3
+int f0/0
+ip addr 10.2.2.254 255.255.255.0
+no shut
+int s1/0
+ip addr 172.16.1.253 255.255.255.252
+no shut
+int s1/1
+ip addr 172.16.3.254 255.255.255.252
+no shut
+```
+
+r4
+```
+conf t
+hostname r4
+int f0/0
+ip addr 10.2.3.254 255.255.255.0
+no shut
+int s1/0
+ip addr 172.16.3.253 255.255.255.252
+no shut
+int s1/1
+ip addr 172.16.2.254 255.255.255.252
+no shut
+```
+
 # OSPF の有効化
 
-```
-area0       area0
-[r1] area0 [r2] 
-```
+r1 と r2 の間のリンクを area0 として有効化します。
 
 OSPFの有効化するには、下記の方法があります。
 - `network` コマンド使用
@@ -512,10 +569,7 @@ r2(config-if)#ip ospf authentication message-digest
 # マルチアエリア
 
 エリア0だけの構成でしたが、エリア1を追加してみます。
-```
-area0      area0      area1
-[r1] area0 [r2] area1 [r4]
-```
+r2 と r4 の間のリンクを area 1 とします。
 
 ## r2 で area 1 の追加
 
@@ -1184,13 +1238,10 @@ O IA 192.168.0.0/22 [110/138] via 172.16.0.254, 00:01:35, Serial1/0
 
 # 再配送
 
-```
-area0      area0      
-[r1] area0 [r2] eigrp1 [r4]
-```
-
 静的ルート、外部ルートを再配送することができます。
 ここでは EIGRP の AS1で学習したルートの再配送を練習します。
+
+r2 と r4の間で動かしていた ospf を停止して、eigrp を動かします。
 
 ## EIGRP を有効化
 ```
@@ -1456,13 +1507,17 @@ O E1    10.2.3.0 [110/84] via 172.16.0.254, 00:00:46, Serial1/0
 ## asbr での経路集約
 
 ```
-area0      area0      
-[r1] area0 [r2] eigrp1 [r4]
-　　　　　　　　　　　subinterface
-                      192.168.0.0/24
-                      192.168.1.0/24
-                      192.168.2.0/24
-                      192.168.3.0/24
+r4#show ip int bri
+Interface                  IP-Address      OK? Method Status                Protocol
+FastEthernet0/0            10.2.3.254      YES manual up                    up
+FastEthernet0/1            192.168.0.1     YES manual up                    up
+FastEthernet0/1.1          192.168.1.1     YES manual up                    up
+FastEthernet0/1.2          192.168.2.1     YES manual up                    up
+FastEthernet0/1.3          192.168.3.1     YES manual up                    up
+Serial1/0                  172.16.3.253    YES manual up                    up
+Serial1/1                  172.16.2.254    YES manual up                    up
+Serial1/2                  unassigned      YES unset  administratively down down
+Serial1/3                  unassigned      YES unset  administratively down down
 ```
 
 経路集約の練習のために追加したアドレスを EIGRP にアドバタイズします。
